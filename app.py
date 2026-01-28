@@ -95,9 +95,7 @@ st.markdown("""
 # --- Helper Functions ---
 @st.cache_resource
 def load_model():
-    import torch
-    device = "cpu"  # Use CPU for Streamlit Cloud stability
-    return whisper.load_model("tiny", device=device)
+    return whisper.load_model("base")
 
 def get_audio_base64(file_path):
     with open(file_path, "rb") as f:
@@ -181,14 +179,10 @@ with st.sidebar:
         st.markdown("---")
         if st.button("🚀 开始 AI 转写", type="primary", use_container_width=True):
             with st.spinner("正在转写..."):
-                try:
-                    if st.session_state.model is None: st.session_state.model = load_model()
-                    result = st.session_state.model.transcribe(st.session_state.audio_file_path, language="zh", initial_prompt="请使用简体中文进行转写。", fp16=False)
-                    st.session_state.transcript = result['segments']
-                    st.rerun()
-                except Exception as e:
-                    st.error(f"转写失败: {str(e)[:100]}。请尝试上传更小的音频文件或稍后重试。")
-                    st.session_state.audio_file_path = None
+                if st.session_state.model is None: st.session_state.model = load_model()
+                result = st.session_state.model.transcribe(st.session_state.audio_file_path, language="zh", initial_prompt="请使用简体中文进行转写。")
+                st.session_state.transcript = result['segments']
+                st.rerun()
 
 # --- Main Interface ---
 if not st.session_state.audio_file_path:
