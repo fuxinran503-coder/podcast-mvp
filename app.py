@@ -95,7 +95,7 @@ st.markdown("""
 # --- Helper Functions ---
 @st.cache_resource
 def load_model():
-    return whisper.load_model("base")
+    return whisper.load_model("tiny")
 
 def get_audio_base64(file_path):
     with open(file_path, "rb") as f:
